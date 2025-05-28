@@ -5,9 +5,10 @@ import { useState } from 'react';
 export default function Home() {
   const [inputText, setInputText] = useState('');
   const [compressedText, setCompressedText] = useState('');
-  const [similarityScore, setSimilarityScore] = useState<number | null>(null);
   const [qualityScore, setQualityScore] = useState<number | null>(null);
   const [tokenReduction, setTokenReduction] = useState<number | null>(null);
+  const [originalTokens, setOriginalTokens] = useState<number | null>(null);
+  const [compressedTokens, setCompressedTokens] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,14 +22,15 @@ export default function Home() {
     setError('');
     
     try {
-      const response = await fetch('https://api.tinytoken.org/compress', {
+      const response = await fetch('http://localhost:8080/compress', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer 1234`
         },
         body: JSON.stringify({
-          text: inputText
+          text: inputText,
+          quality: 0.97
         }),
       });
 
@@ -37,17 +39,19 @@ export default function Home() {
       }
 
       const data = await response.json();
+      console.log(data);
       
       // Assuming the API returns something like:
       // { compressed_text: string, similarity_score: number, quality_score: number, original_tokens: number, compressed_tokens: number }
       setCompressedText(data.compressed_text || data.text || '');
-      setSimilarityScore(data.similarity_score || data.similarity || null);
       setQualityScore(data.quality_score || null);
       
       // Calculate token reduction
-      const originalTokens = data.original_tokens || inputText.split(/\s+/).length;
-      const compressedTokens = data.compressed_tokens || (data.compressed_text || data.text || '').split(/\s+/).length;
-      setTokenReduction(originalTokens - compressedTokens);
+      const origTokens = data.original_length || inputText.split(/\s+/).length;
+      const compTokens = data.compressed_length || (data.compressed_text || data.text || '').split(/\s+/).length;
+      setOriginalTokens(origTokens);
+      setCompressedTokens(compTokens);
+      setTokenReduction(origTokens - compTokens);
       
     } catch (err) {
       console.error('Compression error:', err);
@@ -60,9 +64,10 @@ export default function Home() {
   const handleClear = () => {
     setInputText('');
     setCompressedText('');
-    setSimilarityScore(null);
     setQualityScore(null);
     setTokenReduction(null);
+    setOriginalTokens(null);
+    setCompressedTokens(null);
     setError('');
   };
 
@@ -94,9 +99,9 @@ export default function Home() {
               className="w-full h-40 p-4 border border-gray-300 rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black bg-white"
             />
             <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-black">
-                {inputText.length} characters
-              </span>
+              {originalTokens && <span className="text-sm text-black">
+                {originalTokens} tokens
+              </span>}
               <div className="space-x-2">
                 <button
                   onClick={handleClear}
@@ -133,18 +138,18 @@ export default function Home() {
                 <div className="p-4 bg-white border border-gray-200 rounded-lg">
                   <p className="text-black whitespace-pre-wrap">{compressedText}</p>
                 </div>
-                <div className="mt-2 text-sm text-black">
-                  {compressedText.length} characters
-                </div>
+                {compressedTokens && <div className="mt-2 text-sm text-black">
+                  {compressedTokens} tokens
+                </div>}
               </div>
 
               {/* Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {similarityScore !== null && (
+                {qualityScore !== null && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                     <h3 className="font-medium text-green-800 mb-1">Similarity Score</h3>
                     <p className="text-2xl font-bold text-green-600">
-                      {(similarityScore * 100).toFixed(1)}%
+                      {(qualityScore * 100).toFixed(1)}%
                     </p>
                     <p className="text-sm text-green-700">
                       How similar the compressed text is to the original
@@ -168,7 +173,7 @@ export default function Home() {
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                     <h3 className="font-medium text-blue-800 mb-1">Tokens Reduced</h3>
                     <p className="text-2xl font-bold text-blue-600">
-                      {tokenReduction > 0 ? `-${tokenReduction}` : tokenReduction}
+                      {Math.abs(tokenReduction)}
                     </p>
                     <p className="text-sm text-blue-700">
                       Number of tokens saved through compression
@@ -181,20 +186,7 @@ export default function Home() {
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                 <h3 className="font-medium text-purple-800 mb-2">Compression Summary</h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="text-purple-700">Original: </span>
-                    <span className="font-medium text-black">{inputText.length} chars</span>
-                  </div>
-                  <div>
-                    <span className="text-purple-700">Compressed: </span>
-                    <span className="font-medium text-black">{compressedText.length} chars</span>
-                  </div>
-                  <div>
-                    <span className="text-purple-700">Reduction: </span>
-                    <span className="font-medium text-black">
-                      {inputText.length - compressedText.length} chars
-                    </span>
-                  </div>
+                
                   <div>
                     <span className="text-purple-700">Savings: </span>
                     <span className="font-medium text-black">
