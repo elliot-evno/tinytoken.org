@@ -11,7 +11,7 @@ export default function Home() {
   const [compressedTokens, setCompressedTokens] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
+  const [compressionRatio, setCompressionRatio] = useState<number | null>(null);
   const handleCompress = async () => {
     if (!inputText.trim()) {
       setError('Please enter some text to compress');
@@ -45,6 +45,8 @@ export default function Home() {
       // { compressed_text: string, similarity_score: number, quality_score: number, original_tokens: number, compressed_tokens: number }
       setCompressedText(data.compressed_text || data.text || '');
       setQualityScore(data.quality_score || null);
+      setCompressionRatio(data.compression_ratio * 100 || null);
+      console.log(data);
       
       // Calculate token reduction
       const origTokens = data.original_length || inputText.split(/\s+/).length;
@@ -145,18 +147,7 @@ export default function Home() {
 
               {/* Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {qualityScore !== null && (
-                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <h3 className="font-medium text-green-800 mb-1">Similarity Score</h3>
-                    <p className="text-2xl font-bold text-green-600">
-                      {(qualityScore * 100).toFixed(1)}%
-                    </p>
-                    <p className="text-sm text-green-700">
-                      How similar the compressed text is to the original
-                    </p>
-                  </div>
-                )}
-
+            
                 {qualityScore !== null && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                     <h3 className="font-medium text-amber-800 mb-1">Quality Score</h3>
@@ -180,28 +171,28 @@ export default function Home() {
                     </p>
                   </div>
                 )}
+                {compressionRatio && (
+                  <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <h3 className="font-medium text-purple-800 mb-1">Token Reduction</h3>
+                    <p className="text-2xl font-bold text-purple-600">
+                      {compressionRatio}%
+                    </p>
+                    <p className="text-sm text-purple-700">
+                      Percentage of tokens saved through compression.
+                    </p>
+                  </div>
+                )}
               </div>
 
-              {/* Character Reduction */}
-              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                <h3 className="font-medium text-purple-800 mb-2">Compression Summary</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                
-                  <div>
-                    <span className="text-purple-700">Savings: </span>
-                    <span className="font-medium text-black">
-                      {((1 - compressedText.length / inputText.length) * 100).toFixed(1)}%
-                    </span>
-                  </div>
-                </div>
-              </div>
+            
+         
             </div>
           )}
         </div>
 
         {/* Footer */}
         <div className="text-center mt-8 text-black text-sm">
-          <p><a href="https://docs.tinytoken.org" className="text-blue-600 hover:text-blue-800">Powered by TinyToken API</a></p>
+          <p><a href="https://docs.tinytoken.org" target="_blank" className="text-blue-600 hover:text-blue-800">Powered by TinyToken API</a></p>
         </div>
       </div>
     </div>
