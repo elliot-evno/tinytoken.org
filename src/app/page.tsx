@@ -30,7 +30,7 @@ export default function Home() {
         },
         body: JSON.stringify({
           text: inputText,
-          quality: 0.97
+          auto_quality: true
         }),
       });
 
@@ -77,10 +77,10 @@ export default function Home() {
         {/* Header */}
         <div className="text-center mb-8 pt-8">
           <h1 className="text-4xl font-bold text-black mb-2">
-            Text Compressor
+            TinyToken
           </h1>
           <p className="text-black text-lg">
-            Compress your text while maintaining meaning and readability
+            Compress your prompts while maintaining meaning and readability
           </p>
         </div>
 
