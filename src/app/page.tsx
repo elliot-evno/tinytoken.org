@@ -22,7 +22,7 @@ export default function Home() {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:8080/compress', {
+      const response = await fetch('https://api.tinytoken.org/compress', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
