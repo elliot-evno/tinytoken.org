@@ -201,7 +201,7 @@ export default function Home() {
 
         {/* Footer */}
         <div className="text-center mt-8 text-black text-sm">
-          <p>Powered by TinyToken API</p>
+          <p>Powered by TinyToken API <a href="https://docs.tinytoken.org" className="text-blue-600 hover:text-blue-800">tinytoken.org</a></p>
         </div>
       </div>
     </div>
