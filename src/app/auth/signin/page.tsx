@@ -7,12 +7,18 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function SignIn() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { signIn, signUp, signInWithGoogle } = useAuth();
+  const { signIn, signUp, signInWithGoogle, user } = useAuth();
   const [isSignUp, setIsSignUp] = useState(searchParams.get('mode') === 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      router.push('/dashboard');
+    }
+  }, [user, router]);
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,8 +32,7 @@ export default function SignIn() {
         await signIn(email, password);
       }
       
-      // Redirect to dashboard on success
-      router.push('/dashboard');
+      // Redirect will happen automatically through the useEffect
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -41,7 +46,7 @@ export default function SignIn() {
 
     try {
       await signInWithGoogle();
-      router.push('/dashboard');
+      // Redirect will happen automatically through the useEffect
     } catch (err: any) {
       setError(err.message);
     } finally {

@@ -78,7 +78,7 @@ export default function Home() {
         {/* Top Navigation */}
         <div className="absolute top-0 -right-34 pt-2">
           <button
-            onClick={() => router.push(user ? '/dashboard' : '/landing')}
+            onClick={() => router.push(user ? '/dashboard' : '/dashboard')}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
           >
             {user ? 'Go to Dashboard' : 'Get Started'}
