@@ -191,83 +191,215 @@ export default function Dashboard() {
   
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="py-12 sm:py-20">
             {/* Hero section */}
             <div className="text-center">
-              <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
-                <span className="block">Optimize Your Prompts with</span>
-                <span className="block text-blue-600">TinyToken</span>
+              <div className="mb-8">
+                <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-blue-100 text-blue-800 mb-6">
+                  🛠️ For LLM Product Builders
+                </span>
+              </div>
+              <h1 className="text-5xl tracking-tight font-extrabold text-gray-900 sm:text-6xl md:text-7xl">
+                <span className="block">Optimize Your</span>
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                  LLM Token Usage
+                </span>
               </h1>
-              <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                Save costs and improve efficiency by compressing your prompts while maintaining their meaning. Perfect for AI developers and content creators.
+              <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-600 sm:text-2xl">
+                Reduce LLM API costs by compressing conversation histories and prompts 
+                while preserving context quality. Built for developers shipping AI products.
               </p>
-              <div className="mt-10 flex justify-center gap-4">
+              
+              {/* Benefits */}
+              <div className="mt-10 flex flex-wrap justify-center gap-6 text-sm text-gray-600">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Cut API costs by 60-80%
+                </div>
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Maintain context quality
+                </div>
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Simple API integration
+                </div>
+              </div>
+
+              <div className="mt-12 flex flex-col sm:flex-row justify-center gap-4">
                 <button
                   onClick={() => router.push('/auth/signin')}
-                  className="px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:text-lg"
+                  className="px-8 py-4 border border-transparent text-lg font-semibold rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg"
                 >
-                  Sign In
+                  Start Building
                 </button>
                 <button
-                  onClick={() => router.push('/auth/signin?mode=signup')}
-                  className="px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-600 bg-white hover:bg-gray-50 md:text-lg"
+                  onClick={() => router.push('/')}
+                  className="px-8 py-4 border-2 border-gray-300 text-lg font-semibold rounded-xl text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
                 >
-                  Create Account
+                  Try Demo
+                </button>
+                <button
+                  onClick={() => window.open('https://docs.tinytoken.org', '_blank')}
+                  className="px-8 py-4 border-2 border-blue-300 text-lg font-semibold rounded-xl text-blue-700 bg-blue-50 hover:bg-blue-100 hover:border-blue-400 transition-all duration-200"
+                >
+                  View Docs
                 </button>
               </div>
             </div>
 
-            {/* Feature section */}
-            <div className="mt-20">
-              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="pt-6">
-                  <div className="flow-root bg-white rounded-lg px-6 pb-8">
-                    <div className="-mt-6">
-                      <div className="inline-flex items-center justify-center p-3 bg-blue-500 rounded-md shadow-lg">
+            {/* Use Cases */}
+            <div className="mt-24">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Quick Implementation</h2>
+                <p className="text-xl text-gray-600">Get started with our SDKs in minutes</p>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                <div className="group relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="flex items-center mb-6">
+                      <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl shadow-lg mr-4">
                         <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                         </svg>
                       </div>
-                      <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Fast Compression</h3>
-                      <p className="mt-5 text-base text-gray-500">
-                        Instantly compress your prompts while maintaining their original meaning and context.
-                      </p>
+                      <h3 className="text-xl font-bold text-gray-900">Python SDK</h3>
                     </div>
+                    <div className="bg-gray-900 rounded-lg p-4 text-sm font-mono text-gray-300 mb-4">
+                      <div className="text-green-400"># Install</div>
+                      <div className="mt-1 text-blue-300">pip install tinytoken-sdk</div>
+                      <div className="mt-3 text-green-400"># Usage</div>
+                      <div className="mt-1">import tinytoken</div>
+                      <div className="mt-1">client = tinytoken.TinyToken({`"your-api-key"`})</div>
+                      <div className="mt-1">result = client.compress({`"Your text here"`})</div>
+                      <div className="mt-1 text-yellow-300">print(result)</div>
+                    </div>
+                    <p className="text-gray-600 text-sm">
+                      Python 3.7+ • Current version: 0.1.2
+                    </p>
                   </div>
                 </div>
 
-                <div className="pt-6">
-                  <div className="flow-root bg-white rounded-lg px-6 pb-8">
-                    <div className="-mt-6">
-                      <div className="inline-flex items-center justify-center p-3 bg-blue-500 rounded-md shadow-lg">
+                <div className="group relative p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100">
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="flex items-center mb-6">
+                      <div className="inline-flex items-center justify-center p-3 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl shadow-lg mr-4">
                         <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                         </svg>
                       </div>
-                      <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Quality Assured</h3>
-                      <p className="mt-5 text-base text-gray-500">
-                        Advanced algorithms ensure your compressed prompts maintain high quality and effectiveness.
-                      </p>
+                      <h3 className="text-xl font-bold text-gray-900">JavaScript SDK</h3>
+                    </div>
+                    <div className="bg-gray-900 rounded-lg p-4 text-sm font-mono text-gray-300 mb-4">
+                      <div className="text-green-400"># Install</div>
+                      <div className="mt-1 text-blue-300">npm install tinytoken</div>
+                      <div className="mt-3 text-green-400">// Usage</div>
+                      <div className="mt-1">import TinyToken from {`'tinytoken'`};</div>
+                      <div className="mt-1">const client = new TinyToken({`"your-api-key"`});</div>
+                      <div className="mt-1">const result = await client.compress({`"Your text"`});</div>
+                    </div>
+                    <p className="text-gray-600 text-sm">
+                      Node.js 14.0+ • Current version: 0.1.3
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+       
+            </div>
+
+            {/* Response Format */}
+            <div className="mt-24">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Response Format</h2>
+                <p className="text-xl text-gray-600">Simple compressed string output</p>
+              </div>
+              
+              <div className="max-w-4xl mx-auto">
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+                  <div className="px-8 py-6 bg-gray-50 border-b border-gray-200">
+                    <h3 className="text-lg font-semibold text-gray-900">Compression Result</h3>
+                  </div>
+                  <div className="p-8">
+                    <div className="bg-gray-900 rounded-lg p-6 text-sm font-mono text-gray-300">
+                      <div className="text-green-300"># Input</div>
+                      <div className="mt-1 text-gray-400">original_text = {`"This is a very long conversation history that needs to be compressed to save tokens and reduce API costs while maintaining the essential meaning and context."`}</div>
+                      <div className="mt-4 text-green-300"># Output</div>
+                      <div className="mt-1 text-blue-300">compressed_text = {`"Long conversation history compressed to save tokens, reduce costs, maintain meaning/context."`}</div>
+                    </div>
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                      <div className="flex items-start">
+                        <svg className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                        </svg>
+                        <div className="text-sm text-blue-700">
+                          <strong>Simple Integration:</strong> The compress method returns a compressed string directly. 
+                          No complex JSON parsing needed - just use the returned text in your LLM calls.
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                <div className="pt-6">
-                  <div className="flow-root bg-white rounded-lg px-6 pb-8">
-                    <div className="-mt-6">
-                      <div className="inline-flex items-center justify-center p-3 bg-blue-500 rounded-md shadow-lg">
-                        <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                      </div>
-                      <h3 className="mt-8 text-lg font-medium text-gray-900 tracking-tight">Cost Efficient</h3>
-                      <p className="mt-5 text-base text-gray-500">
-                        Reduce your token usage and save on API costs while maintaining performance.
-                      </p>
+            {/* REST API */}
+            <div className="mt-24">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">REST API</h2>
+                <p className="text-xl text-gray-600">Direct HTTP integration for any language</p>
+              </div>
+              
+              <div className="max-w-4xl mx-auto">
+                <div className="bg-gray-900 rounded-2xl text-white p-8">
+                  <h3 className="text-xl font-bold mb-6 text-white">Endpoint</h3>
+                  <div className="bg-gray-800 rounded-lg p-6 text-sm font-mono text-gray-300">
+                    <div className="text-blue-400 mb-4">POST https://api.tinytoken.org/compress</div>
+                    <div className="mb-4">
+                      <div className="text-yellow-300">Headers:</div>
+                      <div className="ml-4">x-api-key: YOUR_API_KEY</div>
+                      <div className="ml-4">Content-Type: application/json</div>
+                    </div>
+                    <div>
+                      <div className="text-yellow-300">Body:</div>
+                      <div className="ml-4">{`{"text": "Your conversation history or prompt here"}`}</div>
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="mt-24 py-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl text-white">
+              <div className="text-center">
+                <h2 className="text-3xl font-bold mb-8">Ready to optimize your LLM usage?</h2>
+                <p className="text-xl text-blue-100 mb-8">
+                  Start compressing your prompts and conversation histories today
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <button
+                    onClick={() => router.push('/auth/signin')}
+                    className="px-8 py-4 border border-transparent text-lg font-semibold rounded-xl text-blue-600 bg-white hover:bg-gray-50 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                  >
+                    Get API Access
+                  </button>
+                  <button
+                    onClick={() => window.open('https://docs.tinytoken.org', '_blank')}
+                    className="px-8 py-4 border-2 border-white text-lg font-semibold rounded-xl text-white bg-transparent hover:bg-white hover:text-blue-600 transition-all duration-200"
+                  >
+                    Read Documentation
+                  </button>
                 </div>
               </div>
             </div>
