@@ -1,8 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Home() {
+  const router = useRouter();
+  const { user } = useAuth();
   const [inputText, setInputText] = useState('');
   const [compressedText, setCompressedText] = useState('');
   const [qualityScore, setQualityScore] = useState<number | null>(null);
@@ -78,9 +82,17 @@ export default function Home() {
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8 pt-8">
-          <h1 className="text-4xl font-bold text-black mb-2">
-            TinyToken
-          </h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-4xl font-bold text-black">
+              TinyToken
+            </h1>
+            <button
+              onClick={() => router.push(user ? '/dashboard' : '/landing')}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
+            >
+              {user ? 'Go to Dashboard' : 'Get Started'}
+            </button>
+          </div>
           <p className="text-black text-lg">
             Compress your prompts while maintaining meaning and readability
           </p>
