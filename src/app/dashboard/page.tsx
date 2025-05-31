@@ -498,6 +498,14 @@ compressed_text = "Long conversation history compressed to save tokens, reduce c
               <p className="mt-1 text-sm text-gray-500">{user?.email}</p>
             </div>
             <div className="flex gap-4">
+              <a
+                href="https://docs.tinytoken.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 text-blue-600 hover:text-blue-800 underline cursor-pointer"
+              >
+                Docs
+              </a>
               <button
                 onClick={handleGenerateKey}
                 disabled={isGenerating}
