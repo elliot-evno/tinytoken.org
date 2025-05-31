@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface ApiKey {
@@ -15,11 +15,13 @@ interface ApiKey {
 
 export default function Dashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, logout } = useAuth();
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const fetchApiKeys = async () => {
     try {
@@ -50,7 +52,21 @@ export default function Dashboard() {
     }
 
     fetchApiKeys();
-  }, [user, router]);
+
+    // Check for success/canceled params
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+
+    if (success === 'true') {
+      setSuccessMessage('Payment successful! You can now generate API keys.');
+      // Clean up the URL
+      window.history.replaceState({}, '', '/dashboard');
+    } else if (canceled === 'true') {
+      setError('Payment canceled. Please try again to generate API keys.');
+      // Clean up the URL
+      window.history.replaceState({}, '', '/dashboard');
+    }
+  }, [user, router, searchParams]);
 
   const handleLogout = async () => {
     try {
@@ -61,10 +77,42 @@ export default function Dashboard() {
     }
   };
 
+  const redirectToCheckout = async () => {
+    try {
+      setError('');
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_email: user?.email,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
+      }
+
+      const { url } = await response.json();
+      if (!url) {
+        throw new Error('No checkout URL received');
+      }
+
+      // Redirect to Stripe Checkout
+      window.location.href = url;
+    } catch (err) {
+      console.error('Error creating checkout session:', err);
+      setError(err instanceof Error ? err.message : 'Failed to redirect to checkout');
+    }
+  };
+
   const handleGenerateKey = async () => {
     try {
       setIsGenerating(true);
       setError('');
+      setSuccessMessage('');
 
       if (!user?.email) {
         throw new Error('User email not available');
@@ -84,6 +132,11 @@ export default function Dashboard() {
       const responseData = await response.json();
 
       if (!response.ok) {
+        // Check if subscription is required
+        if (response.status === 403 && responseData.subscription_required) {
+          await redirectToCheckout();
+          return;
+        }
         throw new Error(responseData.error || 'Failed to create API key');
       }
 
@@ -141,6 +194,13 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-700">{successMessage}</p>
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (

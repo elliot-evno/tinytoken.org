@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { hasActiveSubscription } from '@/lib/stripe';
 
 const TINYTOKEN_API = 'https://tinytoken-api-ha6fhptkoa-uc.a.run.app';
 const TINYTOKEN_ADMIN_KEY = process.env.TINYTOKEN_ADMIN_KEY;
@@ -70,6 +71,18 @@ export async function POST(request: Request) {
 
     if (!user_email) {
       return NextResponse.json({ error: 'user_email is required' }, { status: 400 });
+    }
+
+    // Check if user has an active subscription
+    const hasSubscription = await hasActiveSubscription(user_email);
+    if (!hasSubscription) {
+      return NextResponse.json(
+        { 
+          error: 'Active subscription required',
+          subscription_required: true
+        },
+        { status: 403 }
+      );
     }
 
     console.log('Creating API key for:', user_email);

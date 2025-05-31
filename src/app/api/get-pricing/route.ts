@@ -24,7 +24,7 @@ export async function GET() {
     console.log('Fetching price with ID:', process.env.STRIPE_PRICE_ID);
     
     // Fetch the price using the price ID from environment variables
-    const price = await stripe.prices.retrieve(process.env.STRIPE_PRICE_ID, {
+    const price = await stripe.prices.retrieve(process.env.STRIPE_PRICE_ID!, {
       expand: ['product'],
     });
 
