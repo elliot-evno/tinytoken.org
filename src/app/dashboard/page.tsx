@@ -23,6 +23,7 @@ export default function Dashboard() {
   const [error, setError] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [deactivatingKeyId, setDeactivatingKeyId] = useState<string | null>(null);
 
   const fetchApiKeys = async () => {
     try {
@@ -163,6 +164,8 @@ export default function Dashboard() {
       return;
     }
 
+    setDeactivatingKeyId(keyId);
+
     try {
       const response = await fetch(`/api/api-keys/deactivate/${keyId}`, {
         method: 'POST',
@@ -182,6 +185,8 @@ export default function Dashboard() {
     } catch (err) {
       console.error('Error deactivating API key:', err);
       setError(err instanceof Error ? err.message : 'Failed to deactivate API key');
+    } finally {
+      setDeactivatingKeyId(null);
     }
   };
   
@@ -294,12 +299,25 @@ export default function Dashboard() {
                     <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                       <button
                         onClick={() => handleDeleteKey(key.key)}
-                        className="text-red-600 hover:text-red-400 transition-colors cursor-pointer"
+                        className={`text-red-600 hover:text-red-400 transition-colors cursor-pointer flex items-center gap-2 ${
+                          deactivatingKeyId === key.key ? 'opacity-50 cursor-not-allowed' : ''
+                        }`}
                         title="Delete API key"
+                        disabled={deactivatingKeyId === key.key}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
+                        {deactivatingKeyId === key.key ? (
+                          <>
+                            <svg className="animate-spin h-4 w-4 mr-1 text-red-400" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                            </svg>
+                            Deactivating...
+                          </>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                          </svg>
+                        )}
                       </button>
                     </td>
                   </tr>
