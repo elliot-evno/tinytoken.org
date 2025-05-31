@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { hasActiveSubscription } from '@/lib/stripe';
 
-const TINYTOKEN_API = 'https://tinytoken-api-ha6fhptkoa-uc.a.run.app';
+const TINYTOKEN_API = 'https://api.tinytoken.org';
 const TINYTOKEN_ADMIN_KEY = process.env.TINYTOKEN_ADMIN_KEY;
 
 // Log environment variable status (but not the actual value)
