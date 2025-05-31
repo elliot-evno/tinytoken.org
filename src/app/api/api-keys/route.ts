@@ -21,6 +21,22 @@ function maskApiKey(key: string): string {
   return `${key.slice(0, 5)}...`;
 }
 
+async function checkKeyActive(apiKey: string): Promise<boolean> {
+  try {
+    const response = await fetch('https://tinytoken-api-ha6fhptkoa-uc.a.run.app/api-keys/check', {
+      method: 'GET',
+      headers: {
+        'x-api-key': apiKey,
+      },
+    });
+    if (!response.ok) return false;
+    const data = await response.json();
+    return !!data.active;
+  } catch (e) {
+    return false;
+  }
+}
+
 export async function GET(request: Request) {
   try {
     const response = await fetch(`${TINYTOKEN_API}/api-keys/list`, {
@@ -35,17 +51,25 @@ export async function GET(request: Request) {
 
     const data = await response.json();
     
-    // Transform and mask the API keys
-    const transformedKeys = (data.api_keys || []).map((key: any) => ({
-      key: maskApiKey(key.api_key),
-      user_email: key.user_email,
-      description: key.description,
-      expires_in_days: key.expires_in_days,
-      created_at: key.created_at || new Date().toISOString(),
-      expires_at: key.expires_at || new Date(Date.now() + (key.expires_in_days || 30) * 24 * 60 * 60 * 1000).toISOString()
+    // For each key, check if it's active using the /api-keys/check endpoint
+    const transformedKeys = await Promise.all((data.api_keys || []).map(async (key: any) => {
+      const isActive = await checkKeyActive(key.api_key);
+      return {
+        key: maskApiKey(key.api_key), // masked for frontend
+        raw_key: key.api_key, // full key for backend use only
+        user_email: key.user_email,
+        description: key.description,
+        expires_in_days: key.expires_in_days,
+        created_at: key.created_at || new Date().toISOString(),
+        expires_at: key.expires_at || new Date(Date.now() + (key.expires_in_days || 30) * 24 * 60 * 60 * 1000).toISOString(),
+        active: isActive,
+      };
     }));
 
-    return NextResponse.json({ keys: transformedKeys });
+    // Only send masked key to frontend
+    const frontendKeys = transformedKeys.map(({ raw_key, ...rest }) => rest);
+
+    return NextResponse.json({ keys: frontendKeys });
   } catch (error) {
     console.error('Error fetching API keys:', error);
     return NextResponse.json(
