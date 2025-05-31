@@ -3,6 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import Prism from 'prismjs';
+import 'prismjs/themes/prism-tomorrow.css';
+import 'prismjs/components/prism-python';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-json';
 
 interface ApiKey {
   key: string;
@@ -68,6 +74,10 @@ export default function Dashboard() {
       window.history.replaceState({}, '', '/dashboard');
     }
   }, [user, router, searchParams]);
+
+  useEffect(() => {
+    Prism.highlightAll();
+  });
 
   const handleLogout = async () => {
     try {
@@ -275,16 +285,33 @@ export default function Dashboard() {
                       </div>
                       <h3 className="text-xl font-bold text-gray-900">Python SDK</h3>
                     </div>
-                    <div className="bg-gray-900 rounded-lg p-4 text-sm font-mono text-gray-300 mb-4">
-                      <div className="text-green-400"># Install</div>
-                      <div className="mt-1 text-blue-300">pip install tinytoken-sdk</div>
-                      <div className="mt-3 text-green-400"># Usage</div>
-                      <div className="mt-1">import tinytoken</div>
-                      <div className="mt-1">client = tinytoken.TinyToken({`"your-api-key"`})</div>
-                      <div className="mt-1">result = client.compress({`"Your text here"`})</div>
-                      <div className="mt-1 text-yellow-300">print(result)</div>
+                    <div className="relative">
+                      <div className="bg-gray-900 rounded-xl overflow-hidden">
+                        <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="text-xs text-gray-400 font-mono">main.py</div>
+                        </div>
+                        <div className="p-4">
+                          <div className="mb-4">
+                          </div>
+                          <div>
+                            <pre className="language-python"><code className="language-python">{`import tinytoken
+
+client = tinytoken.TinyToken("your-api-key")
+result = client.compress("Your text here")
+print(result)`}</code></pre>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm mt-4 flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                       Python 3.7+ • Current version: 0.1.2
                     </p>
                   </div>
@@ -301,15 +328,32 @@ export default function Dashboard() {
                       </div>
                       <h3 className="text-xl font-bold text-gray-900">JavaScript SDK</h3>
                     </div>
-                    <div className="bg-gray-900 rounded-lg p-4 text-sm font-mono text-gray-300 mb-4">
-                      <div className="text-green-400"># Install</div>
-                      <div className="mt-1 text-blue-300">npm install tinytoken</div>
-                      <div className="mt-3 text-green-400">// Usage</div>
-                      <div className="mt-1">import TinyToken from {`'tinytoken'`};</div>
-                      <div className="mt-1">const client = new TinyToken({`"your-api-key"`});</div>
-                      <div className="mt-1">const result = await client.compress({`"Your text"`});</div>
+                    <div className="relative">
+                      <div className="bg-gray-900 rounded-xl overflow-hidden">
+                        <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="text-xs text-gray-400 font-mono">index.js</div>
+                        </div>
+                        <div className="p-4">
+                          <div className="mb-4">
+                          </div>
+                          <div>
+                            <pre className="language-javascript"><code className="language-javascript">{`import TinyToken from 'tinytoken';
+
+const client = new TinyToken("your-api-key");
+const result = await client.compress("Your text");`}</code></pre>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm mt-4 flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
                       Node.js 14.0+ • Current version: 0.1.3
                     </p>
                   </div>
@@ -332,11 +376,24 @@ export default function Dashboard() {
                     <h3 className="text-lg font-semibold text-gray-900">Compression Result</h3>
                   </div>
                   <div className="p-8">
-                    <div className="bg-gray-900 rounded-lg p-6 text-sm font-mono text-gray-300">
-                      <div className="text-green-300"># Input</div>
-                      <div className="mt-1 text-gray-400">original_text = {`"This is a very long conversation history that needs to be compressed to save tokens and reduce API costs while maintaining the essential meaning and context."`}</div>
-                      <div className="mt-4 text-green-300"># Output</div>
-                      <div className="mt-1 text-blue-300">compressed_text = {`"Long conversation history compressed to save tokens, reduce costs, maintain meaning/context."`}</div>
+                    <div className="relative">
+                      <div className="bg-gray-900 rounded-xl overflow-hidden">
+                        <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                          <div className="flex space-x-2">
+                            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                          </div>
+                          <div className="text-xs text-gray-400 font-mono">example.py</div>
+                        </div>
+                        <div className="p-4">
+                          <pre className="language-python"><code className="language-python">{`# Input
+original_text = "This is a very long conversation history that needs to be compressed to save tokens and reduce API costs while maintaining the essential meaning and context."
+
+# Output  
+compressed_text = "Long conversation history compressed to save tokens, reduce costs, maintain meaning/context."`}</code></pre>
+                        </div>
+                      </div>
                     </div>
                     <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                       <div className="flex items-start">
@@ -362,18 +419,31 @@ export default function Dashboard() {
               </div>
               
               <div className="max-w-4xl mx-auto">
-                <div className="bg-gray-900 rounded-2xl text-white p-8">
-                  <h3 className="text-xl font-bold mb-6 text-white">Endpoint</h3>
-                  <div className="bg-gray-800 rounded-lg p-6 text-sm font-mono text-gray-300">
-                    <div className="text-blue-400 mb-4">POST https://api.tinytoken.org/compress</div>
-                    <div className="mb-4">
-                      <div className="text-yellow-300">Headers:</div>
-                      <div className="ml-4">x-api-key: YOUR_API_KEY</div>
-                      <div className="ml-4">Content-Type: application/json</div>
+                <div className="relative">
+                  <div className="bg-gray-900 rounded-xl overflow-hidden">
+                    <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+                      <div className="flex space-x-2">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      </div>
+                      <div className="text-xs text-gray-400 font-mono">curl</div>
                     </div>
-                    <div>
-                      <div className="text-yellow-300">Body:</div>
-                      <div className="ml-4">{`{"text": "Your conversation history or prompt here"}`}</div>
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold mb-6 text-white">Endpoint</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <div className="text-sm text-gray-400 mb-2">HTTP Method & URL:</div>
+                          <pre className="language-bash"><code className="language-bash">POST https://api.tinytoken.org/compress</code></pre>
+                        </div>
+                        <div>
+                          <div className="text-sm text-gray-400 mb-2">Complete Example:</div>
+                          <pre className="language-bash"><code className="language-bash">{`curl -X POST https://api.tinytoken.org/compress \\
+  -H "x-api-key: YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"text": "Your conversation history or prompt here"}'`}</code></pre>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
