@@ -79,20 +79,22 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8 pt-8">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-4xl font-bold text-black">
-              TinyToken
-            </h1>
-            <button
-              onClick={() => router.push(user ? '/dashboard' : '/landing')}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
-            >
-              {user ? 'Go to Dashboard' : 'Get Started'}
-            </button>
-          </div>
+      <div className="max-w-4xl mx-auto relative">
+        {/* Top Navigation */}
+        <div className="absolute top-0 -right-34 pt-2">
+          <button
+            onClick={() => router.push(user ? '/dashboard' : '/landing')}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-medium"
+          >
+            {user ? 'Go to Dashboard' : 'Get Started'}
+          </button>
+        </div>
+
+        {/* Header Content */}
+        <div className="text-center pt-16 mb-8">
+          <h1 className="text-4xl font-bold text-black mb-2">
+            TinyToken
+          </h1>
           <p className="text-black text-lg">
             Compress your prompts while maintaining meaning and readability
           </p>
