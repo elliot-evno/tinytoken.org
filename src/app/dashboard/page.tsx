@@ -615,7 +615,10 @@ compressed_text = "Long conversation history compressed to save tokens, reduce c
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {[...apiKeys]
-                      .sort((a, b) => (b.active === a.active ? 0 : b.active ? 1 : -1))
+                      .sort((a, b) => {
+                        if (a.active !== b.active) return a.active ? -1 : 1;
+                        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+                      })
                       .map((key, index) => (
                         <tr key={index}>
                           <td className="px-6 py-4 whitespace-nowrap">
