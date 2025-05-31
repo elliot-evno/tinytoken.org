@@ -4,11 +4,22 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 
+interface PricingData {
+  name: string;
+  description: string;
+  price: number;
+  interval: string;
+  features: string[];
+}
+
 export default function Dashboard() {
   const router = useRouter();
   const { user, logout } = useAuth();
   const [compressionHistory, setCompressionHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pricingData, setPricingData] = useState<PricingData | null>(null);
+  const [isPricingLoading, setIsPricingLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -17,6 +28,20 @@ export default function Dashboard() {
       setIsLoading(false);
       // TODO: Fetch user's compression history from Firebase
     }
+
+    const fetchPricingData = async () => {
+      try {
+        const response = await fetch('/api/get-pricing');
+        const data = await response.json();
+        setPricingData(data);
+      } catch (err) {
+        console.error('Failed to fetch pricing data:', err);
+      } finally {
+        setIsPricingLoading(false);
+      }
+    };
+
+    fetchPricingData();
   }, [user, router]);
 
   const handleLogout = async () => {
@@ -25,6 +50,39 @@ export default function Dashboard() {
       router.push('/');
     } catch (error) {
       console.error('Failed to log out:', error);
+    }
+  };
+
+  const handleSubscribe = async () => {
+    try {
+      console.log('Starting subscription process...');
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user!.uid,
+          email: user!.email,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create checkout session');
+      }
+
+      const data = await response.json();
+      console.log('Received session URL:', data.sessionUrl);
+      
+      if (!data.sessionUrl) {
+        throw new Error('No session URL received');
+      }
+
+      window.location.href = data.sessionUrl;
+    } catch (err: any) {
+      console.error('Subscription error:', err);
+      setError(err.message || 'Failed to start checkout process. Please try again.');
     }
   };
 
@@ -52,6 +110,48 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Pricing Section */}
+        {isPricingLoading ? (
+          <div className="flex justify-center py-6">
+            <div className="animate-pulse bg-white rounded-lg shadow p-8 w-96 h-96" />
+          </div>
+        ) : pricingData && (
+          <div className="bg-white rounded-lg shadow p-8 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">Get API Access</h2>
+            <div className="flex justify-center items-center">
+              <div className="bg-gray-50 rounded-xl p-6 w-96">
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">{pricingData.name}</h3>
+                <div className="text-3xl font-bold text-gray-900 mb-4">
+                  ${pricingData.price}<span className="text-lg font-normal text-gray-500">/{pricingData.interval}</span>
+                </div>
+                <ul className="text-gray-600 space-y-3 mb-6">
+                  {(pricingData.features || []).map((feature, index) => (
+                    <li key={index} className="flex items-center">
+                      <svg className="h-5 w-5 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={handleSubscribe}
+                  className="w-full bg-blue-600 text-white rounded-lg py-3 px-4 hover:bg-blue-700 transition-colors"
+                >
+                  Subscribe Now
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700">{error}</p>
+          </div>
+        )}
 
         {/* Main Content */}
         <div className="py-6">

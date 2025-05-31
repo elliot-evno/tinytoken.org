@@ -16,6 +16,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [compressionRatio, setCompressionRatio] = useState<number | null>(null);
+
   const handleCompress = async () => {
     if (!inputText.trim()) {
       setError('Please enter some text to compress');
@@ -30,7 +31,7 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer 1234`
+          'x-api-key': '1234' // Demo key
         },
         body: JSON.stringify({
           text: inputText,
@@ -43,16 +44,10 @@ export default function Home() {
       }
 
       const data = await response.json();
-      console.log(data);
-      
-      // Assuming the API returns something like:
-      // { compressed_text: string, similarity_score: number, quality_score: number, original_tokens: number, compressed_tokens: number }
       setCompressedText(data.compressed_text || data.text || '');
       setQualityScore(data.quality_score || null);
       setCompressionRatio(data.compression_ratio * 100 || null);
-      console.log(data);
       
-      // Calculate token reduction
       const origTokens = data.original_length || inputText.split(/\s+/).length;
       const compTokens = data.compressed_length || (data.compressed_text || data.text || '').split(/\s+/).length;
       setOriginalTokens(origTokens);
@@ -95,7 +90,7 @@ export default function Home() {
           <h1 className="text-4xl font-bold text-black mb-2">
             TinyToken
           </h1>
-          <p className="text-black text-lg">
+          <p className="text-black text-lg mb-8">
             Compress your prompts while maintaining meaning and readability
           </p>
         </div>
@@ -161,7 +156,6 @@ export default function Home() {
 
               {/* Stats */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            
                 {qualityScore !== null && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                     <h3 className="font-medium text-amber-800 mb-1">Quality Score</h3>
@@ -197,16 +191,8 @@ export default function Home() {
                   </div>
                 )}
               </div>
-
-            
-         
             </div>
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="text-center mt-8 text-black text-sm">
-          <p><a href="https://docs.tinytoken.org" target="_blank" className="text-blue-600 hover:text-blue-800">Powered by TinyToken API</a></p>
         </div>
       </div>
     </div>
