@@ -499,7 +499,7 @@ compressed_text = "Long conversation history compressed to save tokens, reduce c
           <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full relative">
             <h2 className="text-xl font-bold mb-4 text-gray-900">Your New API Key</h2>
             <p className="mb-2 text-gray-700">
-              Please copy and save this key securely. You won't be able to see it again!
+              Please copy and save this key securely. You won&#39;t be able to see it again!
             </p>
             <div className="mb-4">
               <code className="block w-full p-3 bg-gray-100 rounded font-mono text-gray-800 text-center break-all">
