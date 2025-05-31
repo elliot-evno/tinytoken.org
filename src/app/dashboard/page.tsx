@@ -464,13 +464,13 @@ compressed_text = "Long conversation history compressed to save tokens, reduce c
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <button
                     onClick={() => router.push('/auth/signin')}
-                    className="px-8 py-4 border border-transparent text-lg font-semibold rounded-xl text-blue-600 bg-white hover:bg-gray-50 transform hover:scale-105 transition-all duration-200 shadow-lg"
+                    className="px-8 py-4 border border-transparent text-blue-600 bg-white hover:bg-gray-50 transform hover:scale-105 transition-all duration-200 shadow-lg"
                   >
                     Get API Access
                   </button>
                   <button
                     onClick={() => window.open('https://docs.tinytoken.org', '_blank')}
-                    className="px-8 py-4 border-2 border-white text-lg font-semibold rounded-xl text-white bg-transparent hover:bg-white hover:text-blue-600 transition-all duration-200"
+                    className="px-8 py-4 border-2 border-white text-white bg-transparent hover:bg-white hover:text-blue-600 transition-all duration-200"
                   >
                     Read Documentation
                   </button>
@@ -516,147 +516,172 @@ compressed_text = "Long conversation history compressed to save tokens, reduce c
         </div>
       )}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        {/* Header */}
-        <div className="py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">API Keys</h1>
-              <p className="mt-1 text-sm text-gray-500">{user?.email}</p>
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Header */}
+            <div className="py-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900">API Keys</h1>
+                  <p className="mt-1 text-sm text-gray-500">{user?.email}</p>
+                </div>
+                <div className="flex gap-3 flex-wrap items-center">
+                  <a
+                    href="https://docs.tinytoken.org/sdk/python.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-2 text-green-700 border border-green-200 bg-green-50 hover:bg-green-100 rounded transition font-medium"
+                  >
+                    <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-2.83-.48-5-2.94-5-5.93h2c0 2.21 1.79 4 4 4v2c-.34 0-.67-.03-1-.07zm6.9-2.54A7.007 7.007 0 0019 12h-2c0 2.21-1.79 4-4 4v2c1.93 0 3.68-.78 4.9-2.07zM12 4c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm-6 8c0-1.1.9-2 2-2v4c-1.1 0-2-.9-2-2zm8 6c0-1.1-.9-2-2-2v4c1.1 0 2-.9 2-2zm6-6c0 1.1-.9 2-2 2v-4c1.1 0 2 .9 2 2zm-8-6c-1.1 0-2 .9-2 2h4c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    Python
+                  </a>
+                  <a
+                    href="https://docs.tinytoken.org/sdk/javascript.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 px-3 py-2 text-yellow-700 border border-yellow-200 bg-yellow-50 hover:bg-yellow-100 rounded transition font-medium"
+                  >
+                    <svg className="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-2.83-.48-5-2.94-5-5.93h2c0 2.21 1.79 4 4 4v2c-.34 0-.67-.03-1-.07zm6.9-2.54A7.007 7.007 0 0019 12h-2c0 2.21-1.79 4-4 4v2c1.93 0 3.68-.78 4.9-2.07zM12 4c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm-6 8c0-1.1.9-2 2-2v4c-1.1 0-2-.9-2-2zm8 6c0-1.1-.9-2-2-2v4c1.1 0 2-.9 2-2zm6-6c0 1.1-.9 2-2 2v-4c1.1 0 2 .9 2 2zm-8-6c-1.1 0-2 .9-2 2h4c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    JavaScript
+                  </a>
+                  <a
+                    href="https://docs.tinytoken.org"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-3 py-2 text-blue-600 hover:text-blue-800 underline cursor-pointer"
+                  >
+                    Docs
+                  </a>
+                  <button
+                    onClick={handleGenerateKey}
+                    disabled={isGenerating}
+                    className={`px-4 py-2 bg-blue-600 text-white rounded-lg transition-colors cursor-pointer ${
+                      isGenerating ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
+                    }`}
+                  >
+                    {isGenerating ? 'Generating...' : 'Generate New Key'}
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800 cursor-pointer"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex gap-4">
-              <a
-                href="https://docs.tinytoken.org"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-4 py-2 text-blue-600 hover:text-blue-800 underline cursor-pointer"
-              >
-                Docs
-              </a>
-              <button
-                onClick={handleGenerateKey}
-                disabled={isGenerating}
-                className={`px-4 py-2 bg-blue-600 text-white rounded-lg transition-colors cursor-pointer ${
-                  isGenerating ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-700'
-                }`}
-              >
-                {isGenerating ? 'Generating...' : 'Generate New Key'}
-              </button>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800 cursor-pointer"
-              >
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Success Message */}
-        {successMessage && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-green-700">{successMessage}</p>
-          </div>
-        )}
-
-        {/* Error Message */}
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-700">{error}</p>
-          </div>
-        )}
-
-        {/* API Keys List */}
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          {apiKeys.length > 0 ? (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    API Key
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Created
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Expires
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Description
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {[...apiKeys]
-                  .sort((a, b) => (b.active === a.active ? 0 : b.active ? 1 : -1))
-                  .map((key, index) => (
-                    <tr key={index}>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <code className="text-sm font-mono text-gray-500 bg-gray-100 rounded px-2 py-1">
-                          {key.key}
-                        </code>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(key.created_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(key.expires_at).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {key.description || '-'}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        {key.active ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                            Active
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
-                            Inactive
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                        <button
-                          onClick={() => handleDeleteKey(key.key)}
-                          className={`text-red-600 hover:text-red-400 transition-colors cursor-pointer flex items-center gap-2 ${
-                            deactivatingKeyId === key.key ? 'opacity-50 cursor-not-allowed' : ''
-                          }`}
-                          title="Delete API key"
-                          disabled={deactivatingKeyId === key.key}
-                        >
-                          {deactivatingKeyId === key.key ? (
-                            <>
-                              <svg className="animate-spin h-4 w-4 mr-1 text-red-400" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                              </svg>
-                              Deactivating...
-                            </>
-                          ) : (
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                              <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                            </svg>
-                          )}
-                        </button>
-                      </td>
+            {/* Success Message */}
+            {successMessage && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-green-700">{successMessage}</p>
+              </div>
+            )}
+            {/* Error Message */}
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p className="text-red-700">{error}</p>
+              </div>
+            )}
+            {/* API Keys List */}
+            <div className="bg-white shadow rounded-lg overflow-hidden">
+              {apiKeys.length > 0 ? (
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        API Key
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Created
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Expires
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Description
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-              </tbody>
-            </table>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500 mb-4">No API keys found</p>
-              <p className="text-sm text-gray-400">
-                Generate a new key to get started with TinyToken API
-              </p>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {[...apiKeys]
+                      .sort((a, b) => (b.active === a.active ? 0 : b.active ? 1 : -1))
+                      .map((key, index) => (
+                        <tr key={index}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <code className="text-sm font-mono text-gray-500 bg-gray-100 rounded px-2 py-1">
+                              {key.key}
+                            </code>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(key.created_at).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(key.expires_at).toLocaleDateString()}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {key.description || '-'}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm">
+                            {key.active ? (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                Active
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                                Inactive
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                            <button
+                              onClick={() => handleDeleteKey(key.key)}
+                              className={`text-red-600 hover:text-red-400 transition-colors cursor-pointer flex items-center gap-2 ${
+                                deactivatingKeyId === key.key ? 'opacity-50 cursor-not-allowed' : ''
+                              }`}
+                              title="Delete API key"
+                              disabled={deactivatingKeyId === key.key}
+                            >
+                              {deactivatingKeyId === key.key ? (
+                                <>
+                                  <svg className="animate-spin h-4 w-4 mr-1 text-red-400" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+                                  </svg>
+                                  Deactivating...
+                                </>
+                              ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 mb-4">No API keys found</p>
+                  <p className="text-sm text-gray-400">
+                    Generate a new key to get started with TinyToken API
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+         
         </div>
       </div>
     </div>
