@@ -30,6 +30,8 @@ export default function Dashboard() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [deactivatingKeyId, setDeactivatingKeyId] = useState<string | null>(null);
+  const [showKeyModal, setShowKeyModal] = useState(false);
+  const [newApiKey, setNewApiKey] = useState<string | null>(null);
 
   const fetchApiKeys = useCallback(async () => {
     try {
@@ -124,6 +126,7 @@ export default function Dashboard() {
       setIsGenerating(true);
       setError('');
       setSuccessMessage('');
+      setNewApiKey(null);
 
       if (!user?.email) {
         throw new Error('User email not available');
@@ -155,9 +158,10 @@ export default function Dashboard() {
         throw new Error('No API key was generated');
       }
 
-      // Show success message with the new key
-      alert(`Your new API key: ${responseData.key}\n\nPlease save this key securely as it won't be shown again.`);
-      
+      // Show modal with the new key
+      setNewApiKey(responseData.key);
+      setShowKeyModal(true);
+
       // Refresh the keys list
       await fetchApiKeys();
     } catch (err) {
@@ -489,6 +493,28 @@ compressed_text = "Long conversation history compressed to save tokens, reduce c
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Modal for new API key */}
+      {showKeyModal && newApiKey && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full relative">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Your New API Key</h2>
+            <p className="mb-2 text-gray-700">
+              Please copy and save this key securely. You won't be able to see it again!
+            </p>
+            <div className="mb-4">
+              <code className="block w-full p-3 bg-gray-100 rounded font-mono text-gray-800 text-center break-all">
+                {newApiKey}
+              </code>
+            </div>
+            <button
+              onClick={() => setShowKeyModal(false)}
+              className="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="py-6">
