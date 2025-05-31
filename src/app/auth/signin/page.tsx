@@ -33,24 +33,21 @@ export default function SignIn() {
       }
       
       // Redirect will happen automatically through the useEffect
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: Error | unknown) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleSignIn = async () => {
-    setError('');
-    setIsLoading(true);
-
     try {
       await signInWithGoogle();
-      // Redirect will happen automatically through the useEffect
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
+      router.push('/dashboard');
+    } catch (error) {
+      console.error('Error signing in:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to sign in';
+      alert(`Error signing in: ${errorMessage}`);
     }
   };
 

@@ -6,9 +6,13 @@ if (!process.env.STRIPE_PRICE_ID) {
   throw new Error('STRIPE_PRICE_ID is not set in environment variables');
 }
 
+interface RequestBody {
+  user_email: string;
+}
+
 export async function POST(request: Request) {
   try {
-    const body = await request.json();
+    const body = await request.json() as RequestBody;
     const { user_email } = body;
 
     if (!user_email) {
@@ -19,8 +23,7 @@ export async function POST(request: Request) {
     }
 
     // Get the host from the request headers
-    const headersList = headers();
-    const host = headersList.get('host') || 'localhost:3000';
+    const host = (await headers()).get('host') || 'localhost:3000';
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     const baseUrl = `${protocol}://${host}`;
 
@@ -74,10 +77,11 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ url: session.url });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating checkout session:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create checkout session';
     return NextResponse.json(
-      { error: error.message || 'Failed to create checkout session' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

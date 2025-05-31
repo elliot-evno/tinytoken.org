@@ -1,6 +1,21 @@
 import { NextResponse } from 'next/server';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { initializeApp, getApps } from 'firebase/app';
 import crypto from 'crypto';
+
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+};
+
+// Initialize Firebase app if not already initialized
+if (getApps().length === 0) {
+  initializeApp(firebaseConfig);
+}
 
 const db = getFirestore();
 const TINYTOKEN_ADMIN_KEY = process.env.TINYTOKEN_ADMIN_KEY;
@@ -41,7 +56,7 @@ export async function POST(request: Request) {
 
     // Store the API key in Firestore
     const apiKeysRef = collection(db, 'api_keys');
-    const docRef = await addDoc(apiKeysRef, {
+    await addDoc(apiKeysRef, {
       key: apiKey,
       user_email: user_email,
       description: description || null,

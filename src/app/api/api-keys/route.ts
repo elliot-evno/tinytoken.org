@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { headers } from 'next/headers';
 import { hasActiveSubscription } from '@/lib/stripe';
 
 const TINYTOKEN_API = 'https://api.tinytoken.org';
@@ -21,6 +20,16 @@ function maskApiKey(key: string): string {
   return `${key.slice(0, 5)}...`;
 }
 
+interface ApiKeyResponse {
+  api_key: string;
+  user_email: string;
+  description: string | null;
+  expires_in_days: number;
+  created_at: string;
+  expires_at: string;
+  active: boolean;
+}
+
 async function checkKeyActive(apiKey: string): Promise<boolean> {
   try {
     const response = await fetch('https://tinytoken-api-ha6fhptkoa-uc.a.run.app/api-keys/check', {
@@ -32,12 +41,12 @@ async function checkKeyActive(apiKey: string): Promise<boolean> {
     if (!response.ok) return false;
     const data = await response.json();
     return !!data.active;
-  } catch (e) {
+  } catch {
     return false;
   }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const response = await fetch(`${TINYTOKEN_API}/api-keys/list`, {
       headers: new Headers({
@@ -52,11 +61,10 @@ export async function GET(request: Request) {
     const data = await response.json();
     
     // For each key, check if it's active using the /api-keys/check endpoint
-    const transformedKeys = await Promise.all((data.api_keys || []).map(async (key: any) => {
+    const transformedKeys = await Promise.all((data.api_keys || []).map(async (key: ApiKeyResponse) => {
       const isActive = await checkKeyActive(key.api_key);
       return {
-        key: maskApiKey(key.api_key), // masked for frontend
-        raw_key: key.api_key, // full key for backend use only
+        key: maskApiKey(key.api_key),
         user_email: key.user_email,
         description: key.description,
         expires_in_days: key.expires_in_days,
@@ -66,10 +74,7 @@ export async function GET(request: Request) {
       };
     }));
 
-    // Only send masked key to frontend
-    const frontendKeys = transformedKeys.map(({ raw_key, ...rest }) => rest);
-
-    return NextResponse.json({ keys: frontendKeys });
+    return NextResponse.json({ keys: transformedKeys });
   } catch (error) {
     console.error('Error fetching API keys:', error);
     return NextResponse.json(
@@ -152,8 +157,8 @@ export async function POST(request: Request) {
     try {
       responseData = JSON.parse(responseText);
       console.log('Parsed response data:', responseData);
-    } catch (e) {
-      console.error('Failed to parse response as JSON:', e);
+    } catch (error) {
+      console.error('Failed to parse response as JSON:', error);
       return NextResponse.json(
         { error: 'Invalid JSON response from TinyToken API' },
         { status: 500 }
@@ -190,10 +195,10 @@ export async function POST(request: Request) {
 
     // Success! Return the transformed API key data
     return NextResponse.json(transformedResponse);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Unexpected error creating API key:', error);
     return NextResponse.json(
-      { error: error.message || 'Failed to create API key' },
+      { error: 'Failed to create API key' },
       { status: 500 }
     );
   }

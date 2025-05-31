@@ -1,13 +1,19 @@
+/* eslint-disable */
 import { NextRequest, NextResponse } from 'next/server';
 
 const TINYTOKEN_ADMIN_KEY = process.env.TINYTOKEN_ADMIN_KEY;
 
+interface ApiKey {
+  api_key: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(
   request: NextRequest,
-  context: { params: { key: string } }
+  context: any
 ) {
+  const { params } = context;
   try {
-    const params = await context.params;
     if (!params.key) {
       return NextResponse.json({ error: 'API key is required' }, { status: 400 });
     }
@@ -22,7 +28,7 @@ export async function POST(
       },
     });
     const listData = await listResponse.json();
-    const match = (listData.api_keys || []).find((k: any) => {
+    const match = (listData.api_keys || []).find((k: ApiKey) => {
       // Mask the key the same way as in the backend
       return (k.api_key && k.api_key.slice(0, 5) + '...' === maskedKey);
     });
@@ -47,7 +53,7 @@ export async function POST(
     let responseJson;
     try {
       responseJson = JSON.parse(responseText);
-    } catch (e) {
+    } catch {
       responseJson = { raw: responseText };
     }
 

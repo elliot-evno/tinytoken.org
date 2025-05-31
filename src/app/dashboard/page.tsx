@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Prism from 'prismjs';
@@ -31,7 +31,7 @@ export default function Dashboard() {
   const [successMessage, setSuccessMessage] = useState('');
   const [deactivatingKeyId, setDeactivatingKeyId] = useState<string | null>(null);
 
-  const fetchApiKeys = async () => {
+  const fetchApiKeys = useCallback(async () => {
     try {
       const response = await fetch('/api/api-keys');
 
@@ -51,7 +51,7 @@ export default function Dashboard() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user?.email]);
 
   useEffect(() => {
     if (!user) {
@@ -73,7 +73,7 @@ export default function Dashboard() {
       // Clean up the URL
       window.history.replaceState({}, '', '/dashboard');
     }
-  }, [user, router, searchParams]);
+  }, [user, router, searchParams, fetchApiKeys]);
 
   useEffect(() => {
     Prism.highlightAll();

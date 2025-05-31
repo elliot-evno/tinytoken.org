@@ -3,38 +3,33 @@ import { headers } from 'next/headers';
 import Stripe from 'stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2025-05-28.basil',
 });
 
-async function createApiKey(userId: string) {
-  try {
-    const response = await fetch('https://api.tinytoken.org/api-keys/create', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.TINYTOKEN_ADMIN_KEY}`,
-      },
-      body: JSON.stringify({
-        userId,
-        expiresIn: '30d',
-      }),
-    });
+async function createApiKey(userId: string): Promise<string> {
+  const response = await fetch('https://api.tinytoken.org/api-keys/create', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.TINYTOKEN_ADMIN_KEY}`,
+    },
+    body: JSON.stringify({
+      userId,
+      expiresIn: '30d',
+    }),
+  });
 
-    if (!response.ok) {
-      throw new Error('Failed to create API key');
-    }
-
-    const data = await response.json();
-    return data.apiKey;
-  } catch (error) {
-    console.error('Error creating API key:', error);
-    throw error;
+  if (!response.ok) {
+    throw new Error('Failed to create API key');
   }
+
+  const data = await response.json();
+  return data.apiKey;
 }
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = headers().get('stripe-signature')!;
+  const signature = (await headers()).get('stripe-signature')!;
 
   let event: Stripe.Event;
 
@@ -44,9 +39,10 @@ export async function POST(req: Request) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Invalid signature';
     return NextResponse.json(
-      { error: `Webhook Error: ${err.message}` },
+      { error: `Webhook Error: ${errorMessage}` },
       { status: 400 }
     );
   }
@@ -59,25 +55,17 @@ export async function POST(req: Request) {
 
         if (userId) {
           // Create API key for the user
-          const apiKey = await createApiKey(userId);
-
-          // Store the API key in your database associated with the user
-          // You'll need to implement this part based on your database setup
-          
-          // For example, using Firebase:
-          // await admin.firestore().collection('users').doc(userId).update({
-          //   apiKey,
-          //   subscriptionStatus: 'active',
-          //   subscriptionId: session.subscription
-          // });
+          await createApiKey(userId);
+          // Note: The API key is stored in the database by createApiKey
+          // No need to store it again here
         }
         break;
       }
 
       case 'customer.subscription.deleted': {
-        const subscription = event.data.object as Stripe.Subscription;
         // Handle subscription cancellation
         // Revoke API key access
+        // TODO: Implement key revocation logic
         break;
       }
     }
@@ -85,8 +73,9 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true });
   } catch (error) {
     console.error('Error processing webhook:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to process webhook';
     return NextResponse.json(
-      { error: 'Failed to process webhook' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

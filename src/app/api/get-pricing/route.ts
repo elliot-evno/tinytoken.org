@@ -54,8 +54,8 @@ export async function GET() {
           features = parsedFeatures;
         }
       }
-    } catch (parseError) {
-      console.warn('Failed to parse features from metadata, using defaults:', parseError);
+    } catch (error) {
+      console.warn('Failed to parse features from metadata, using defaults:', error);
     }
 
     const response = {
@@ -68,10 +68,11 @@ export async function GET() {
 
     console.log('Returning pricing data:', response);
     return NextResponse.json(response);
-  } catch (err: any) {
-    console.error('Error fetching pricing data:', err);
+  } catch (error) {
+    console.error('Error fetching pricing data:', error);
+    const errorMessage = error instanceof Error ? error.message : 'Failed to fetch pricing data';
     return NextResponse.json(
-      { error: err.message || 'Failed to fetch pricing data' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
