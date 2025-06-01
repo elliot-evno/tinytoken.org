@@ -9,7 +9,7 @@ interface ApiKey {
   created_at: string;
   active: boolean;
 }
-
+ // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(
   request: NextRequest,
   { params }: any
