@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 const TINYTOKEN_API = 'https://tinytoken-apikeys.vercel.app/api';
 const TINYTOKEN_ADMIN_KEY = process.env.TINYTOKEN_ADMIN_KEY;
