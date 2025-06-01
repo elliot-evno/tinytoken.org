@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 const TINYTOKEN_API = 'https://tinytoken-apikeys.vercel.app/api';
 const TINYTOKEN_ADMIN_KEY = process.env.TINYTOKEN_ADMIN_KEY;
@@ -14,10 +14,10 @@ interface ApiKey {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function POST(
   request: NextRequest,
-  { params }: { params: { key: string } }
+  context: { params: { key: string } }
 ) {
   try {
-    const maskedKey = await params.key;
+    const maskedKey = context.params.key;
     if (!maskedKey) {
       return NextResponse.json({ error: 'API key is required' }, { status: 400 });
     }
