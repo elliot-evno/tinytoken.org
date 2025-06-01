@@ -9,13 +9,15 @@ interface ApiKey {
   created_at: string;
   active: boolean;
 }
- // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export async function POST(
   request: NextRequest,
-  { params }: any
+  { params }: { params: Promise<{ key: string }> }
 ) {
   try {
-    const maskedKey = params.key;
+    const { key } = await params;
+    const maskedKey = key;
+    
     if (!maskedKey) {
       return NextResponse.json({ error: 'API key is required' }, { status: 400 });
     }
