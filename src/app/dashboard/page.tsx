@@ -31,6 +31,30 @@ export default function Dashboard() {
   const [deactivatingKeyId, setDeactivatingKeyId] = useState<string | null>(null);
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [newApiKey, setNewApiKey] = useState<string | null>(null);
+  const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+
+  const toggleFaq = (index: number) => {
+    setExpandedFaq(expandedFaq === index ? null : index);
+  };
+
+  const faqData = [
+    {
+      question: "What's included in the subscription?",
+      answer: "You get unlimited API calls to compress your text, valid API keys for 30 days, and full access to our compression algorithms. Perfect for production applications."
+    },
+    {
+      question: "How do API keys work?",
+      answer: "After subscribing, you can generate API keys that are valid for 30 days. Use these keys to authenticate your API requests. You can create multiple keys and manage them from your dashboard."
+    },
+    {
+      question: "Can I cancel anytime?",
+      answer: "Yes! You can cancel your subscription at any time. Your API keys will remain active until their expiration date, and you won't be charged for the next billing period."
+    },
+    {
+      question: "Is there a free trial?",
+      answer: "You can try our compression demo for free on the homepage to see how it works. To get API access for your applications, a subscription is required."
+    }
+  ];
 
   const fetchApiKeys = useCallback(async () => {
     try {
@@ -210,6 +234,32 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header with Logo */}
+          <div className="pt-6 pb-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-white rounded-sm flex items-center justify-center">
+                  <span className="text-black font-bold text-lg">TT</span>
+                </div>
+                <span className="text-xl font-bold text-gray-900">TinyToken</span>
+              </div>
+              <div className="flex items-center space-x-4">
+                <button
+                  onClick={() => window.open('https://docs.tinytoken.org', '_blank')}
+                  className="text-gray-600 hover:text-gray-900 transition-colors"
+                >
+                  Docs
+                </button>
+                <button
+                  onClick={() => router.push('/auth/signin')}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Sign In
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="py-12 sm:py-20">
             {/* Hero section */}
             <div className="text-center">
@@ -360,6 +410,75 @@ const result = await client.compress("Your text");`}</code></pre>
        
             </div>
 
+            {/* Pricing Section */}
+            <div className="mt-24 ">
+              <div className="text-center mb-16">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">Simple, Transparent Pricing</h2>
+                <p className="text-xl text-gray-600">Start free, scale as you grow</p>
+              </div>
+              
+              <div className="grid mx-auto justify-center w-full max-w-4xl">             
+                {/* Pro Tier */}
+                <div className="relative p-8 bg-white rounded-2xl shadow-xl border-2 border-blue-500 hover:shadow-2xl transition-all duration-300">
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                    <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                      Production Ready
+                    </span>
+                  </div>
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">TinyToken API</h3>
+                    <div className="mb-6">
+                      <span className="text-4xl font-bold text-gray-900">$5</span>
+                      <span className="text-gray-600">/month</span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-6">
+                      Full API access for production applications
+                    </p>
+                    <ul className="space-y-4 mb-8 text-left">
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-gray-700">Unlimited API calls</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-gray-700">30-day API key validity</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-gray-700">Usage analytics</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-gray-700">Email support</span>
+                      </li>
+                      <li className="flex items-start">
+                        <svg className="w-5 h-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-gray-700">Python & JavaScript SDKs</span>
+                      </li>
+                    </ul>
+                    <button
+                      onClick={() => router.push('/auth/signin')}
+                      className="w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 font-semibold shadow-lg"
+                    >
+                      Get API Access
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+       
+            </div>
+
             {/* Response Format */}
             <div className="mt-24">
               <div className="text-center mb-16">
@@ -460,7 +579,41 @@ const result = await client.compress("Your text");`}</code></pre>
                 </div>
               </div>
             </div>
-
+       {/* Pricing FAQ */}
+       <div className="mt-16 max-w-3xl mx-auto">
+                <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">Frequently Asked Questions</h3>
+                <div className="space-y-6">
+                  {faqData.map((faq, index) => (
+                    <div key={index} className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                      <button
+                        onClick={() => toggleFaq(index)}
+                        className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors duration-200"
+                      >
+                        <h4 className="font-semibold text-gray-900">{faq.question}</h4>
+                        <svg 
+                          className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${
+                            expandedFaq === index ? 'rotate-180' : ''
+                          }`}
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      <div className={`transition-all duration-300 ease-in-out ${
+                        expandedFaq === index 
+                          ? 'max-h-40 opacity-100' 
+                          : 'max-h-0 opacity-0'
+                      } overflow-hidden`}>
+                        <div className="px-6 pb-4">
+                          <p className="text-gray-600">{faq.answer}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             {/* Stats */}
             <div className="mt-24 py-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl text-white">
               <div className="text-center">
