@@ -2,20 +2,21 @@ import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 
+const TINYTOKEN_API = 'https://tinytoken-apikeys.vercel.app/api';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-05-28.basil',
 });
 
 async function createApiKey(userId: string): Promise<string> {
-  const response = await fetch('https://api.tinytoken.org/api-keys/create', {
+  const response = await fetch(`${TINYTOKEN_API}/keys/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.TINYTOKEN_ADMIN_KEY}`,
+      'x-admin-key': process.env.TINYTOKEN_ADMIN_KEY!,
     },
     body: JSON.stringify({
-      userId,
-      expiresIn: '30d',
+      user_email: userId,
+      description: 'Created after subscription',
     }),
   });
 
@@ -24,7 +25,7 @@ async function createApiKey(userId: string): Promise<string> {
   }
 
   const data = await response.json();
-  return data.apiKey;
+  return data.key;
 }
 
 export async function POST(req: Request) {
@@ -54,18 +55,32 @@ export async function POST(req: Request) {
         const userId = session.metadata?.userId;
 
         if (userId) {
-          // Create API key for the user
           await createApiKey(userId);
-          // Note: The API key is stored in the database by createApiKey
-          // No need to store it again here
         }
         break;
       }
 
       case 'customer.subscription.deleted': {
-        // Handle subscription cancellation
-        // Revoke API key access
-        // TODO: Implement key revocation logic
+        const subscription = event.data.object as Stripe.Subscription;
+        const userId = subscription.metadata?.userId;
+        
+        if (userId) {
+          // Deactivate all keys for this user
+          const response = await fetch(`${TINYTOKEN_API}/keys/deactivate-all`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-admin-key': process.env.TINYTOKEN_ADMIN_KEY!,
+            },
+            body: JSON.stringify({
+              user_email: userId,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to deactivate user API keys');
+          }
+        }
         break;
       }
     }

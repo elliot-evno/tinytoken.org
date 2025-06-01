@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { hasActiveSubscription } from '@/lib/stripe';
 
-const TINYTOKEN_API = 'https://api.tinytoken.org';
+const TINYTOKEN_API = 'https://tinytoken-apikeys.vercel.app/api';
 const TINYTOKEN_ADMIN_KEY = process.env.TINYTOKEN_ADMIN_KEY;
 
 // Log environment variable status (but not the actual value)
@@ -13,68 +13,34 @@ console.log('Environment check:', {
 if (!TINYTOKEN_ADMIN_KEY) {
   throw new Error('TINYTOKEN_ADMIN_KEY environment variable is not set');
 }
-
-function maskApiKey(key: string): string {
-  if (!key) return '';
-  // Show first 8 and last 4 characters, mask the rest
-  return `${key.slice(0, 5)}...`;
-}
-
-interface ApiKeyResponse {
+interface ApiKey {
   api_key: string;
   user_email: string;
-  description: string | null;
-  expires_in_days: number;
   created_at: string;
-  expires_at: string;
   active: boolean;
 }
 
-async function checkKeyActive(apiKey: string): Promise<boolean> {
-  try {
-    const response = await fetch('https://tinytoken-api-ha6fhptkoa-uc.a.run.app/api-keys/check', {
-      method: 'GET',
-      headers: {
-        'x-api-key': apiKey,
-      },
-    });
-    if (!response.ok) return false;
-    const data = await response.json();
-    return !!data.active;
-  } catch {
-    return false;
-  }
+function maskKey(key: string): string {
+  return key.slice(0, 5) + '...';
 }
 
 export async function GET() {
   try {
-    const response = await fetch(`${TINYTOKEN_API}/api-keys/list`, {
+    const response = await fetch(`${TINYTOKEN_API}/keys/list`, {
       headers: new Headers({
         'x-admin-key': TINYTOKEN_ADMIN_KEY as string
       })
     });
 
     if (!response.ok) {
-      throw new Error('Failed to fetch API keys from TinyToken API');
+      throw new Error('Failed to fetch API keys');
     }
 
     const data = await response.json();
-    
-    // For each key, check if it's active using the /api-keys/check endpoint
-    const transformedKeys = await Promise.all((data.api_keys || []).map(async (key: ApiKeyResponse) => {
-      const isActive = await checkKeyActive(key.api_key);
-      return {
-        key: maskApiKey(key.api_key),
-        user_email: key.user_email,
-        description: key.description,
-        expires_in_days: key.expires_in_days,
-        created_at: key.created_at || new Date().toISOString(),
-        expires_at: key.expires_at || new Date(Date.now() + (key.expires_in_days || 30) * 24 * 60 * 60 * 1000).toISOString(),
-        active: isActive,
-      };
-    }));
-
-    return NextResponse.json({ keys: transformedKeys });
+    return NextResponse.json({ keys: data.api_keys.map((key: ApiKey) => ({
+      ...key,
+      api_key: maskKey(key.api_key)
+    })) });
   } catch (error) {
     console.error('Error fetching API keys:', error);
     return NextResponse.json(
@@ -86,7 +52,6 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    // Double check environment variable
     if (!TINYTOKEN_ADMIN_KEY) {
       console.error('TINYTOKEN_ADMIN_KEY is not available in the POST handler');
       return NextResponse.json(
@@ -115,86 +80,30 @@ export async function POST(request: Request) {
     }
 
     console.log('Creating API key for:', user_email);
-    console.log('Using TinyToken API URL:', `${TINYTOKEN_API}/api-keys/create`);
-
-    const requestBody = {
-      user_email,
-      description: description || 'Generated from dashboard'
-    };
-
-    console.log('Request body:', requestBody);
-
-    const requestHeaders = new Headers({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'x-admin-key': TINYTOKEN_ADMIN_KEY as string
-    });
-
-    console.log('Making request to TinyToken API...');
     
-    const response = await fetch(`${TINYTOKEN_API}/api-keys/create`, {
+    const response = await fetch(`${TINYTOKEN_API}/keys/create`, {
       method: 'POST',
-      headers: requestHeaders,
-      body: JSON.stringify(requestBody)
+      headers: {
+        'x-admin-key': TINYTOKEN_ADMIN_KEY,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_email,
+        description: description || 'Generated from dashboard'
+      })
     });
 
-    console.log('Response status:', response.status);
-    const responseHeaders = Object.fromEntries(response.headers.entries());
-    console.log('Response headers:', responseHeaders);
-
-    const responseText = await response.text();
-    console.log('Raw response:', responseText);
-
-    if (!responseText) {
-      console.error('Empty response received');
-      return NextResponse.json(
-        { error: 'Empty response from TinyToken API' },
-        { status: 500 }
-      );
-    }
-
-    let responseData;
-    try {
-      responseData = JSON.parse(responseText);
-      console.log('Parsed response data:', responseData);
-    } catch (error) {
-      console.error('Failed to parse response as JSON:', error);
-      return NextResponse.json(
-        { error: 'Invalid JSON response from TinyToken API' },
-        { status: 500 }
-      );
-    }
+    const responseData = await response.json();
+    console.log('API response:', responseData);
 
     if (!response.ok) {
-      const errorMessage = responseData.error || `API request failed with status ${response.status}`;
-      console.error('API error:', errorMessage, responseData);
       return NextResponse.json(
-        { error: errorMessage },
+        { error: responseData.error || 'Failed to create API key' },
         { status: response.status }
       );
     }
 
-    // Check if we got an API key in the response
-    if (!responseData.api_key) {
-      console.error('Response missing api_key field:', responseData);
-      return NextResponse.json(
-        { error: 'API response missing api_key field' },
-        { status: 500 }
-      );
-    }
-
-    // Transform the response to match our expected format
-    const transformedResponse = {
-      key: responseData.api_key,
-      user_email: responseData.user_email,
-      description: responseData.description,
-      expires_in_days: responseData.expires_in_days,
-      created_at: new Date().toISOString(),
-      expires_at: new Date(Date.now() + responseData.expires_in_days * 24 * 60 * 60 * 1000).toISOString()
-    };
-
-    // Success! Return the transformed API key data
-    return NextResponse.json(transformedResponse);
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error('Unexpected error creating API key:', error);
     return NextResponse.json(

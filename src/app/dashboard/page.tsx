@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import Prism from 'prismjs';
@@ -11,13 +11,12 @@ import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-json';
 
 interface ApiKey {
-  key: string;
+  api_key: string;
   user_email: string;
   description: string | null;
   created_at: string;
   expires_at: string;
-  expires_in_days: number;
-  active?: boolean;
+  active: boolean;
 }
 
 export default function Dashboard() {
@@ -43,9 +42,8 @@ export default function Dashboard() {
       }
 
       const data = await response.json();
-      // Safely handle the response and filter keys
-      const keys = data.keys || [];
-      const userKeys = keys.filter((key: ApiKey) => key.user_email === user?.email);
+      // Filter keys for current user
+      const userKeys = (data.keys || []).filter((key: ApiKey) => key.user_email === user?.email);
       setApiKeys(userKeys);
     } catch (err) {
       console.error('Error fetching API keys:', err);
@@ -154,12 +152,12 @@ export default function Dashboard() {
         throw new Error(responseData.error || 'Failed to create API key');
       }
 
-      if (!responseData.key) {
+      if (!responseData.api_key) {
         throw new Error('No API key was generated');
       }
 
       // Show modal with the new key
-      setNewApiKey(responseData.key);
+      setNewApiKey(responseData.api_key);
       setShowKeyModal(true);
 
       // Refresh the keys list
@@ -181,10 +179,7 @@ export default function Dashboard() {
 
     try {
       const response = await fetch(`/api/api-keys/deactivate/${keyId}`, {
-        method: 'POST',
-        headers: {
-          'x-admin-key': process.env.NEXT_PUBLIC_ADMIN_KEY || '',
-        },
+        method: 'POST'
       });
 
       if (!response.ok) {
@@ -202,7 +197,15 @@ export default function Dashboard() {
       setDeactivatingKeyId(null);
     }
   };
-  
+
+  // Add memoized sorted keys
+  const sortedApiKeys = useMemo(() => {
+    return [...apiKeys].sort((a, b) => {
+      if (a.active !== b.active) return a.active ? -1 : 1;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+  }, [apiKeys]);
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -614,64 +617,59 @@ compressed_text = "Long conversation history compressed to save tokens, reduce c
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {[...apiKeys]
-                      .sort((a, b) => {
-                        if (a.active !== b.active) return a.active ? -1 : 1;
-                        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-                      })
-                      .map((key, index) => (
-                        <tr key={index}>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <code className="text-sm font-mono text-gray-500 bg-gray-100 rounded px-2 py-1">
-                              {key.key}
-                            </code>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {new Date(key.created_at).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {new Date(key.expires_at).toLocaleDateString()}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {key.description || '-'}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm">
-                            {key.active ? (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                                Active
-                              </span>
-                            ) : (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
-                                Inactive
-                              </span>
-                            )}
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                            <button
-                              onClick={() => handleDeleteKey(key.key)}
-                              className={`text-red-600 hover:text-red-400 transition-colors cursor-pointer flex items-center gap-2 ${
-                                deactivatingKeyId === key.key ? 'opacity-50 cursor-not-allowed' : ''
-                              }`}
-                              title="Delete API key"
-                              disabled={deactivatingKeyId === key.key}
-                            >
-                              {deactivatingKeyId === key.key ? (
-                                <>
-                                  <svg className="animate-spin h-4 w-4 mr-1 text-red-400" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                                  </svg>
-                                  Deactivating...
-                                </>
-                              ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                  <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                    {sortedApiKeys.map((key, index) => (
+                      <tr key={index}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <code className="text-sm font-mono text-gray-500 bg-gray-100 rounded px-2 py-1">
+                            {key.api_key}
+                          </code>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {new Date(key.created_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {new Date(key.expires_at).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {key.description || '-'}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm">
+                          {key.active ? (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-500">
+                              Inactive
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                          <button
+                            onClick={() => handleDeleteKey(key.api_key)}
+                            className={`text-red-600 hover:text-red-400 transition-colors cursor-pointer flex items-center gap-2 ${
+                              deactivatingKeyId === key.api_key ? 'opacity-50 cursor-not-allowed' : ''
+                            }`}
+                            title="Delete API key"
+                            disabled={deactivatingKeyId === key.api_key}
+                          >
+                            {deactivatingKeyId === key.api_key ? (
+                              <>
+                                <svg className="animate-spin h-4 w-4 mr-1 text-red-400" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
                                 </svg>
-                              )}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
+                                Deactivating...
+                              </>
+                            ) : (
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+                              </svg>
+                            )}
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               ) : (
