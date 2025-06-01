@@ -306,21 +306,16 @@ export default function Dashboard() {
                           <div className="mb-4">
                           </div>
                           <div>
-                            <pre className="language-python"><code className="language-python">{`import tinytoken
+                            <pre className="language-python"><code className="language-python">{`from tinytoken import TinyToken
 
-client = tinytoken.TinyToken("your-api-key")
+client = TinyToken("your-api-key")
 result = client.compress("Your text here")
 print(result)`}</code></pre>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <p className="text-gray-600 text-sm mt-4 flex items-center">
-                      <svg className="w-4 h-4 mr-2 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Python 3.7+ • Current version: 0.1.2
-                    </p>
+                
                   </div>
                 </div>
 
@@ -357,12 +352,7 @@ const result = await client.compress("Your text");`}</code></pre>
                         </div>
                       </div>
                     </div>
-                    <p className="text-gray-600 text-sm mt-4 flex items-center">
-                      <svg className="w-4 h-4 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Node.js 14.0+ • Current version: 0.1.3
-                    </p>
+                   
                   </div>
                 </div>
               </div>
@@ -374,13 +364,13 @@ const result = await client.compress("Your text");`}</code></pre>
             <div className="mt-24">
               <div className="text-center mb-16">
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">Response Format</h2>
-                <p className="text-xl text-gray-600">Simple compressed string output</p>
+                <p className="text-xl text-gray-600">Detailed compression results</p>
               </div>
               
               <div className="max-w-4xl mx-auto">
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
                   <div className="px-8 py-6 bg-gray-50 border-b border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-900">Compression Result</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">API Response</h3>
                   </div>
                   <div className="p-8">
                     <div className="relative">
@@ -391,25 +381,39 @@ const result = await client.compress("Your text");`}</code></pre>
                             <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
                             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                           </div>
-                          <div className="text-xs text-gray-400 font-mono">example.py</div>
+                          <div className="text-xs text-gray-400 font-mono">response.json</div>
                         </div>
                         <div className="p-4">
-                          <pre className="language-python"><code className="language-python">{`# Input
-original_text = "This is a very long conversation history that needs to be compressed to save tokens and reduce API costs while maintaining the essential meaning and context."
-
-# Output  
-compressed_text = "Long conversation history compressed to save tokens, reduce costs, maintain meaning/context."`}</code></pre>
+                          <pre className="language-json"><code className="language-json">{`{
+  "compressed_text": "Long conversation history compressed to save tokens, reduce costs, maintain meaning/context.",
+  "original_length": 150,
+  "compressed_length": 100,
+  "compression_ratio": 0.33,
+  "quality_score": 0.98,
+  "processing_time_ms": 1000
+}`}</code></pre>
                         </div>
                       </div>
                     </div>
-                    <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                      <div className="flex items-start">
-                        <svg className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                        </svg>
-                        <div className="text-sm text-blue-700">
-                          <strong>Simple Integration:</strong> The compress method returns a compressed string directly. 
-                          No complex JSON parsing needed - just use the returned text in your LLM calls.
+                    <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="p-4 bg-blue-50 rounded-lg">
+                        <div className="flex items-start">
+                          <svg className="h-5 w-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                          </svg>
+                          <div className="text-sm text-blue-700">
+                            <strong>compression_ratio:</strong> Shows how much smaller the text became (0.33 = 33% reduction)
+                          </div>
+                        </div>
+                      </div>
+                      <div className="p-4 bg-green-50 rounded-lg">
+                        <div className="flex items-start">
+                          <svg className="h-5 w-5 text-green-500 mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                          </svg>
+                          <div className="text-sm text-green-700">
+                            <strong>quality_score:</strong> Measures how well context was preserved (0.98 = excellent quality)
+                          </div>
                         </div>
                       </div>
                     </div>
